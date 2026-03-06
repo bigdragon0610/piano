@@ -2,78 +2,88 @@
 
 // ===== Note definitions (C4 octave) =====
 const NOTES = [
-  { name: 'C',  label: 'ド', freq: 261.63, type: 'white' },
-  { name: 'C#', label: '',   freq: 277.18, type: 'black' },
-  { name: 'D',  label: 'レ', freq: 293.66, type: 'white' },
-  { name: 'D#', label: '',   freq: 311.13, type: 'black' },
-  { name: 'E',  label: 'ミ', freq: 329.63, type: 'white' },
+  { name: 'C',  label: 'ド',  freq: 261.63, type: 'white' },
+  { name: 'C#', label: '',    freq: 277.18, type: 'black' },
+  { name: 'D',  label: 'レ',  freq: 293.66, type: 'white' },
+  { name: 'D#', label: '',    freq: 311.13, type: 'black' },
+  { name: 'E',  label: 'ミ',  freq: 329.63, type: 'white' },
   { name: 'F',  label: 'ファ', freq: 349.23, type: 'white' },
-  { name: 'F#', label: '',   freq: 369.99, type: 'black' },
-  { name: 'G',  label: 'ソ', freq: 392.00, type: 'white' },
-  { name: 'G#', label: '',   freq: 415.30, type: 'black' },
-  { name: 'A',  label: 'ラ', freq: 440.00, type: 'white' },
-  { name: 'A#', label: '',   freq: 466.16, type: 'black' },
-  { name: 'B',  label: 'シ', freq: 493.88, type: 'white' },
-  { name: 'C5', label: 'ド', freq: 523.25, type: 'white' },
+  { name: 'F#', label: '',    freq: 369.99, type: 'black' },
+  { name: 'G',  label: 'ソ',  freq: 392.00, type: 'white' },
+  { name: 'G#', label: '',    freq: 415.30, type: 'black' },
+  { name: 'A',  label: 'ラ',  freq: 440.00, type: 'white' },
+  { name: 'A#', label: '',    freq: 466.16, type: 'black' },
+  { name: 'B',  label: 'シ',  freq: 493.88, type: 'white' },
+  { name: 'C5', label: 'ド',  freq: 523.25, type: 'white' },
 ];
 
 // ===== Audio =====
 let audioCtx = null;
 
-function getAudioCtx() {
+/**
+ * Get (or create) the AudioContext, resuming it if suspended.
+ * Must be called inside a user-gesture handler to satisfy browser autoplay policy.
+ */
+async function getAudioCtx() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
   if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
+    await audioCtx.resume();
   }
   return audioCtx;
 }
 
 /**
- * Synthesize a piano-like tone using multiple harmonic oscillators
- * with a percussive ADSR envelope.
+ * Synthesize a piano-like tone: multiple harmonic oscillators + percussive ADSR.
  */
-function playNote(freq) {
-  const ctx = getAudioCtx();
-  const now = ctx.currentTime;
-  const duration = 2.2;
+async function playNote(freq) {
+  let ctx;
+  try {
+    ctx = await getAudioCtx();
+  } catch (e) {
+    console.warn('AudioContext error:', e);
+    return;
+  }
 
-  // Compressor to prevent clipping
+  const now = ctx.currentTime;
+  const duration = 2.4;
+
+  // Compressor to avoid clipping when many keys are pressed
   const compressor = ctx.createDynamicsCompressor();
-  compressor.threshold.value = -18;
+  compressor.threshold.value = -16;
   compressor.knee.value = 8;
   compressor.ratio.value = 4;
   compressor.attack.value = 0.002;
-  compressor.release.value = 0.25;
+  compressor.release.value = 0.3;
   compressor.connect(ctx.destination);
 
-  // Master gain
   const masterGain = ctx.createGain();
-  masterGain.gain.setValueAtTime(0.45, now);
+  masterGain.gain.setValueAtTime(0.5, now);
   masterGain.connect(compressor);
 
-  // Harmonic partials: [frequency multiplier, initial gain, wave type]
+  // [frequency multiplier, initial amplitude, oscillator type]
+  // Triangle for fundamental gives warmth; sines for upper harmonics
   const partials = [
-    [1,    0.7,  'triangle'], // fundamental (warm, not too bright)
-    [2,    0.25, 'sine'],     // 2nd harmonic
-    [3,    0.12, 'sine'],     // 3rd harmonic
-    [4,    0.06, 'sine'],     // 4th harmonic
-    [6,    0.02, 'sine'],     // 6th harmonic
+    [1,  0.65, 'triangle'],
+    [2,  0.22, 'sine'],
+    [3,  0.10, 'sine'],
+    [4,  0.05, 'sine'],
+    [6,  0.02, 'sine'],
   ];
 
-  partials.forEach(([mult, gainVal, waveType]) => {
-    const osc = ctx.createOscillator();
+  partials.forEach(([mult, amp, type]) => {
+    const osc  = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = waveType;
+    osc.type = type;
     osc.frequency.value = freq * mult;
 
-    // ADSR: very fast attack (percussive), exponential decay, no sustain
+    // Percussive ADSR: near-instant attack, exponential decay, no sustain
     gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(gainVal, now + 0.006);  // attack ~6ms
-    gain.gain.exponentialRampToValueAtTime(gainVal * 0.3, now + 0.08); // initial decay
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);    // long decay
+    gain.gain.linearRampToValueAtTime(amp,       now + 0.006); // attack  ~6 ms
+    gain.gain.exponentialRampToValueAtTime(amp * 0.35, now + 0.08);  // early decay
+    gain.gain.exponentialRampToValueAtTime(0.0001,     now + duration); // full decay
 
     osc.connect(gain);
     gain.connect(masterGain);
@@ -86,9 +96,9 @@ function playNote(freq) {
 let fadeTimer = null;
 const noteDisplay = document.getElementById('current-note');
 
-function showNote(noteName) {
+function showNote(text) {
   if (fadeTimer) clearTimeout(fadeTimer);
-  noteDisplay.textContent = noteName;
+  noteDisplay.textContent = text;
   noteDisplay.classList.remove('fade');
   noteDisplay.classList.add('visible');
 }
@@ -98,7 +108,7 @@ function scheduleNoteFade() {
   fadeTimer = setTimeout(() => {
     noteDisplay.classList.remove('visible');
     noteDisplay.classList.add('fade');
-  }, 800);
+  }, 900);
 }
 
 // ===== Render piano keys =====
@@ -113,10 +123,12 @@ function renderPiano() {
     key.dataset.freq = note.freq;
 
     if (note.type === 'white') {
-      const label = document.createElement('span');
-      label.className = 'key-label';
-      label.textContent = note.label;
-      key.appendChild(label);
+      if (note.label) {
+        const span = document.createElement('span');
+        span.className = 'key-label';
+        span.textContent = note.label;
+        key.appendChild(span);
+      }
       whiteKeysEl.appendChild(key);
     } else {
       blackKeysEl.appendChild(key);
@@ -124,26 +136,24 @@ function renderPiano() {
   });
 }
 
-// ===== Touch & pointer event handling =====
-// Map: pointerId → element currently being pressed
+// ===== Pointer / touch handling =====
+// Map: pointerId → currently pressed key element (or null)
 const activePointers = new Map();
 
+/**
+ * Find the topmost key at the given screen coordinates.
+ * Black keys are checked first because they have higher z-index.
+ */
 function getKeyAtPoint(x, y) {
-  // Check black keys first (they're on top)
-  const blackKeys = document.querySelectorAll('.key.black');
-  for (const key of blackKeys) {
-    const rect = key.getBoundingClientRect();
-    if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-      return key;
-    }
+  const blacks = document.querySelectorAll('.key.black');
+  for (const key of blacks) {
+    const r = key.getBoundingClientRect();
+    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return key;
   }
-  // Then white keys
-  const whiteKeys = document.querySelectorAll('.key.white');
-  for (const key of whiteKeys) {
-    const rect = key.getBoundingClientRect();
-    if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-      return key;
-    }
+  const whites = document.querySelectorAll('.key.white');
+  for (const key of whites) {
+    const r = key.getBoundingClientRect();
+    if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return key;
   }
   return null;
 }
@@ -152,10 +162,9 @@ function pressKey(key) {
   if (!key || key.dataset.pressed === 'true') return;
   key.dataset.pressed = 'true';
   key.classList.add('active');
-  playNote(parseFloat(key.dataset.freq));
-  const label = key.dataset.note === 'C5' ? 'ド' :
-    NOTES.find(n => n.name === key.dataset.note)?.label || key.dataset.note;
-  showNote(label || key.dataset.note);
+  playNote(parseFloat(key.dataset.freq)); // async – fire and forget
+  const note = NOTES.find(n => n.name === key.dataset.note);
+  showNote(note?.label || key.dataset.note);
 }
 
 function releaseKey(key) {
@@ -165,80 +174,65 @@ function releaseKey(key) {
   scheduleNoteFade();
 }
 
-// ===== Pointer events (works for both touch and mouse) =====
 const pianoEl = document.getElementById('piano');
 
 pianoEl.addEventListener('pointerdown', e => {
   e.preventDefault();
-  pianoEl.setPointerCapture(e.pointerId);
+  // Capture so pointermove/pointerup always arrive here even outside the element
+  try { pianoEl.setPointerCapture(e.pointerId); } catch (_) {}
   const key = getKeyAtPoint(e.clientX, e.clientY);
-  if (key) {
-    pressKey(key);
-    activePointers.set(e.pointerId, key);
-  }
+  activePointers.set(e.pointerId, key || null);
+  pressKey(key);
 }, { passive: false });
 
 pianoEl.addEventListener('pointermove', e => {
   e.preventDefault();
   if (!activePointers.has(e.pointerId)) return;
-
   const newKey = getKeyAtPoint(e.clientX, e.clientY);
   const oldKey = activePointers.get(e.pointerId);
-
   if (newKey !== oldKey) {
     releaseKey(oldKey);
-    if (newKey) {
-      pressKey(newKey);
-    }
+    pressKey(newKey);
     activePointers.set(e.pointerId, newKey || null);
   }
 }, { passive: false });
 
 pianoEl.addEventListener('pointerup', e => {
-  e.preventDefault();
-  const key = activePointers.get(e.pointerId);
-  releaseKey(key);
-  activePointers.delete(e.pointerId);
-}, { passive: false });
-
-pianoEl.addEventListener('pointercancel', e => {
-  const key = activePointers.get(e.pointerId);
-  releaseKey(key);
+  releaseKey(activePointers.get(e.pointerId));
   activePointers.delete(e.pointerId);
 });
 
-// ===== Keyboard support (desktop) =====
+pianoEl.addEventListener('pointercancel', e => {
+  releaseKey(activePointers.get(e.pointerId));
+  activePointers.delete(e.pointerId);
+});
+
+// ===== PC keyboard support =====
 const KEY_MAP = {
   'a': 'C', 'w': 'C#', 's': 'D', 'e': 'D#', 'd': 'E',
   'f': 'F', 't': 'F#', 'g': 'G', 'y': 'G#', 'h': 'A',
   'u': 'A#', 'j': 'B', 'k': 'C5',
 };
 
-const pressedKeys = new Set();
-
 document.addEventListener('keydown', e => {
   if (e.repeat) return;
   const noteName = KEY_MAP[e.key.toLowerCase()];
   if (!noteName) return;
-  pressedKeys.add(e.key.toLowerCase());
-  const key = document.querySelector(`.key[data-note="${noteName}"]`);
-  pressKey(key);
+  pressKey(document.querySelector(`.key[data-note="${noteName}"]`));
 });
 
 document.addEventListener('keyup', e => {
   const noteName = KEY_MAP[e.key.toLowerCase()];
   if (!noteName) return;
-  pressedKeys.delete(e.key.toLowerCase());
-  const key = document.querySelector(`.key[data-note="${noteName}"]`);
-  releaseKey(key);
+  releaseKey(document.querySelector(`.key[data-note="${noteName}"]`));
 });
 
-// ===== Service Worker registration =====
+// ===== Service Worker =====
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('Service Worker registration failed:', err);
-    });
+    navigator.serviceWorker.register('./sw.js').catch(err =>
+      console.warn('SW registration failed:', err)
+    );
   });
 }
 
