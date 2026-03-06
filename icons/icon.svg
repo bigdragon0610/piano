@@ -13,44 +13,45 @@
   <rect width="512" height="512" rx="90" fill="url(#bg)"/>
 
   <!-- Piano keyboard body -->
-  <rect x="36" y="140" width="440" height="232" rx="10" fill="#1a1a1a" stroke="#444" stroke-width="2"/>
+  <!-- keys span x=49..463 (414px), body adds 5px padding each side → x=44, width=424, center=256 -->
+  <rect x="44" y="140" width="424" height="232" rx="10" fill="#1a1a1a" stroke="#444" stroke-width="2"/>
 
-  <!-- White keys (8 keys: C D E F G A B C) -->
-  <!-- Each white key: width=50, gap=2, total=8*50+7*2=414, start x=(512-414)/2=49 -->
+  <!-- White keys (8 keys: C D E F G A B C') -->
+  <!-- width=50, gap=2, step=52, total=414, start=(512-414)/2=49, end=49+414=463, center=256 ✓ -->
   <g filter="url(#shadow)">
-    <rect x="41"  y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
-    <rect x="93"  y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
-    <rect x="145" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
-    <rect x="197" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
-    <rect x="249" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
-    <rect x="301" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
-    <rect x="353" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
-    <rect x="405" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="49"  y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="101" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="153" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="205" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="257" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="309" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="361" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="413" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
   </g>
 
   <!-- Black keys (C# D# F# G# A#) -->
-  <!-- step=52 (width=50 + gap=2). Black key width=32, half=16 -->
-  <!-- boundary center = (right_edge_of_lower + left_edge_of_upper) / 2 -->
-  <!-- C# center: (91+93)/2=92,   left=92-16=76  -->
-  <!-- D# center: (143+145)/2=144, left=144-16=128 -->
-  <!-- F# center: (247+249)/2=248, left=248-16=232 -->
-  <!-- G# center: (299+301)/2=300, left=300-16=284 -->
-  <!-- A# center: (351+353)/2=352, left=352-16=336 -->
+  <!-- step=52. Black key width=32 (half=16).                        -->
+  <!-- boundary center = (right_of_lower + left_of_upper) / 2       -->
+  <!-- C# : ( 99+101)/2=100, left=100-16= 84                        -->
+  <!-- D# : (151+153)/2=152, left=152-16=136                        -->
+  <!-- F# : (255+257)/2=256, left=256-16=240                        -->
+  <!-- G# : (307+309)/2=308, left=308-16=292                        -->
+  <!-- A# : (359+361)/2=360, left=360-16=344                        -->
   <g fill="#111">
-    <rect x="76"  y="148" width="32" height="132" rx="5"/>
-    <rect x="128" y="148" width="32" height="132" rx="5"/>
-    <rect x="232" y="148" width="32" height="132" rx="5"/>
-    <rect x="284" y="148" width="32" height="132" rx="5"/>
-    <rect x="336" y="148" width="32" height="132" rx="5"/>
+    <rect x="84"  y="148" width="32" height="132" rx="5"/>
+    <rect x="136" y="148" width="32" height="132" rx="5"/>
+    <rect x="240" y="148" width="32" height="132" rx="5"/>
+    <rect x="292" y="148" width="32" height="132" rx="5"/>
+    <rect x="344" y="148" width="32" height="132" rx="5"/>
   </g>
 
   <!-- Subtle shine on black keys -->
   <g fill="none" stroke="#333" stroke-width="1" opacity="0.6">
-    <rect x="77"  y="149" width="30" height="60" rx="4"/>
-    <rect x="129" y="149" width="30" height="60" rx="4"/>
-    <rect x="233" y="149" width="30" height="60" rx="4"/>
-    <rect x="285" y="149" width="30" height="60" rx="4"/>
-    <rect x="337" y="149" width="30" height="60" rx="4"/>
+    <rect x="85"  y="149" width="30" height="60" rx="4"/>
+    <rect x="137" y="149" width="30" height="60" rx="4"/>
+    <rect x="241" y="149" width="30" height="60" rx="4"/>
+    <rect x="293" y="149" width="30" height="60" rx="4"/>
+    <rect x="345" y="149" width="30" height="60" rx="4"/>
   </g>
 
   <!-- Musical note decoration -->
