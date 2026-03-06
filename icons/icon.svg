@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2a2a2a"/>
+      <stop offset="100%" stop-color="#111111"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- App icon background (rounded square) -->
+  <rect width="512" height="512" rx="90" fill="url(#bg)"/>
+
+  <!-- Piano keyboard body -->
+  <rect x="36" y="140" width="440" height="232" rx="10" fill="#1a1a1a" stroke="#444" stroke-width="2"/>
+
+  <!-- White keys (8 keys: C D E F G A B C) -->
+  <!-- Each white key: width=50, gap=2, total=8*50+7*2=414, start x=(512-414)/2=49 -->
+  <g filter="url(#shadow)">
+    <rect x="41"  y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="93"  y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="145" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="197" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="249" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="301" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="353" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+    <rect x="405" y="148" width="50" height="216" rx="6" fill="white" stroke="#ccc" stroke-width="1.5"/>
+  </g>
+
+  <!-- Black keys (C# D# F# G# A#) -->
+  <!-- White key width=52 (with gap). Black key width=32, height=130 -->
+  <!-- C# center between C(41-91) and D(93-143): ~92px, left=92-16=76 -->
+  <!-- D# center between D(93-143) and E(145-195): ~144px, left=144-16=128 -->
+  <!-- F# center between F(197-247) and G(249-299): ~248px, left=248-16=232 -->
+  <!-- G# center between G(249-299) and A(301-351): ~300px, left=300-16=284 -->
+  <!-- A# center between A(301-351) and B(353-403): ~352px, left=352-16=336 -->
+  <g fill="#111">
+    <rect x="68"  y="148" width="32" height="132" rx="5"/>
+    <rect x="120" y="148" width="32" height="132" rx="5"/>
+    <rect x="224" y="148" width="32" height="132" rx="5"/>
+    <rect x="276" y="148" width="32" height="132" rx="5"/>
+    <rect x="328" y="148" width="32" height="132" rx="5"/>
+  </g>
+
+  <!-- Subtle shine on black keys -->
+  <g fill="none" stroke="#333" stroke-width="1" opacity="0.6">
+    <rect x="69"  y="149" width="30" height="60" rx="4"/>
+    <rect x="121" y="149" width="30" height="60" rx="4"/>
+    <rect x="225" y="149" width="30" height="60" rx="4"/>
+    <rect x="277" y="149" width="30" height="60" rx="4"/>
+    <rect x="329" y="149" width="30" height="60" rx="4"/>
+  </g>
+
+  <!-- Musical note decoration -->
+  <text x="256" y="118" text-anchor="middle" font-family="serif" font-size="42" fill="#555">♪</text>
+</svg>

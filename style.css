@@ -1,0 +1,217 @@
+/* ===== Reset & Base ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* ===== App Layout ===== */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh; /* dynamic viewport height for mobile */
+  height: 100vh;
+}
+
+/* ===== Header ===== */
+header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px 8px;
+  gap: 10px;
+}
+
+header h1 {
+  font-size: 1.4rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: #ddd;
+}
+
+/* ===== Note Display ===== */
+#note-display {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  position: relative;
+}
+
+#current-note {
+  font-size: 3rem;
+  font-weight: 200;
+  letter-spacing: 0.05em;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.05s ease-in;
+}
+
+#current-note.visible {
+  opacity: 1;
+  transition: opacity 0.05s ease-in;
+}
+
+#current-note.fade {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+/* ===== Piano Section ===== */
+.piano-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 24px;
+  min-height: 0;
+}
+
+/* ===== Piano Keyboard ===== */
+.piano {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  padding: 0 4px;
+}
+
+/* ===== White Keys ===== */
+.white-keys {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 3px;
+}
+
+.key.white {
+  flex: 1;
+  background: linear-gradient(to bottom, #f0f0f0 0%, #ffffff 30%, #fafafa 100%);
+  border: 1px solid #bbb;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 14px;
+  cursor: pointer;
+  transition: background 0.05s;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.4), inset 0 -2px 4px rgba(0,0,0,0.1);
+}
+
+.key.white:active,
+.key.white.active {
+  background: linear-gradient(to bottom, #d8d8d8 0%, #e8e8e8 40%, #e0e0e0 100%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 2px 4px rgba(0,0,0,0.15);
+  transform: translateY(1px);
+}
+
+.key-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #888;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}
+
+/* ===== Black Keys ===== */
+.black-keys {
+  position: absolute;
+  top: 0;
+  left: 4px; /* matches piano padding */
+  right: 4px;
+  height: 58%;
+  pointer-events: none;
+}
+
+.key.black {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(to bottom, #333 0%, #1a1a1a 60%, #111 100%);
+  border-radius: 0 0 6px 6px;
+  cursor: pointer;
+  pointer-events: all;
+  box-shadow: 2px 4px 6px rgba(0,0,0,0.7), inset 0 -2px 3px rgba(255,255,255,0.05);
+  transition: background 0.05s;
+  z-index: 10;
+}
+
+.key.black:active,
+.key.black.active {
+  background: linear-gradient(to bottom, #555 0%, #3a3a3a 60%, #2a2a2a 100%);
+  box-shadow: 1px 2px 3px rgba(0,0,0,0.7), inset 0 2px 3px rgba(0,0,0,0.3);
+  transform: translateY(1px);
+}
+
+/*
+  Black key positions (8 white keys, each = 100%/8 = 12.5% of keyboard width, gap=3px):
+  Approximate center placement between adjacent white keys.
+  Black key width = 60% of white key width ≈ 7.5% of total.
+
+  Using white-key-slot = (100% + gaps) / 8
+  Left positions center the black key between two white keys.
+*/
+.key.black[data-note="C#"] { left:  7.8%; width: 7.5%; }
+.key.black[data-note="D#"] { left: 20.3%; width: 7.5%; }
+.key.black[data-note="F#"] { left: 45.3%; width: 7.5%; }
+.key.black[data-note="G#"] { left: 57.8%; width: 7.5%; }
+.key.black[data-note="A#"] { left: 70.3%; width: 7.5%; }
+
+/* ===== Landscape warning ===== */
+.landscape-notice {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #111;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  color: #aaa;
+  font-size: 1rem;
+  text-align: center;
+  padding: 40px;
+}
+
+.landscape-notice .rotate-icon {
+  font-size: 3rem;
+}
+
+@media (orientation: landscape) and (max-height: 480px) {
+  .landscape-notice {
+    display: flex;
+  }
+}
+
+/* ===== Subtle top border accent ===== */
+.piano-wrapper::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: #333;
+  border-radius: 1px;
+}

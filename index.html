@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+
+  <!-- PWA meta tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Piano">
+  <meta name="theme-color" content="#111111">
+
+  <title>Piano</title>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- iOS home screen icon (SVG not supported on iOS, falls back to screenshot) -->
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Landscape warning (shown only on small landscape screens) -->
+  <div class="landscape-notice" aria-hidden="true">
+    <span class="rotate-icon">📱</span>
+    <p>縦向きにしてください</p>
+  </div>
+
+  <div id="app">
+
+    <!-- Header -->
+    <header>
+      <h1>Piano</h1>
+    </header>
+
+    <!-- Current note display -->
+    <div id="note-display" aria-live="polite" aria-label="現在の音">
+      <span id="current-note"></span>
+    </div>
+
+    <!-- Piano keyboard -->
+    <section class="piano-wrapper" aria-label="ピアノ鍵盤">
+      <div class="piano" id="piano" role="group">
+        <!-- White keys container -->
+        <div class="white-keys"></div>
+        <!-- Black keys container (absolutely positioned) -->
+        <div class="black-keys"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
