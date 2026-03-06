@@ -166,11 +166,21 @@ header h1 {
   box-shadow: 1px 0 4px rgba(0, 0, 0, 0.8);
 }
 
-.key.black[data-note="C#"] { bottom: 5%;    }
-.key.black[data-note="D#"] { bottom: 17.5%; }
-.key.black[data-note="F#"] { bottom: 42.5%; }
-.key.black[data-note="G#"] { bottom: 55%;   }
-.key.black[data-note="A#"] { bottom: 67.5%; }
+/*
+  Black key center = white-key boundary = (n+1) * 12.5%  (n = lower white key index from bottom)
+  bottom = center - half_black_height = (n+1)*12.5 - 3.75
+
+    C# (C=0, D=1):  1*12.5 - 3.75 = 8.75%
+    D# (D=1, E=2):  2*12.5 - 3.75 = 21.25%
+    F# (F=3, G=4):  4*12.5 - 3.75 = 46.25%
+    G# (G=4, A=5):  5*12.5 - 3.75 = 58.75%
+    A# (A=5, B=6):  6*12.5 - 3.75 = 71.25%
+*/
+.key.black[data-note="C#"] { bottom: 8.75%;  }
+.key.black[data-note="D#"] { bottom: 21.25%; }
+.key.black[data-note="F#"] { bottom: 46.25%; }
+.key.black[data-note="G#"] { bottom: 58.75%; }
+.key.black[data-note="A#"] { bottom: 71.25%; }
 
 /* ===== Landscape warning ===== */
 .landscape-notice {
