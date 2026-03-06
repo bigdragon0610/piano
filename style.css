@@ -6,8 +6,14 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
-  height: 100%;
+html {
+  /* iOS Safari: fill available height excluding browser chrome */
+  height: -webkit-fill-available;
+}
+
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
   background: #111;
   color: #fff;
@@ -21,8 +27,9 @@ html, body {
 #app {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
-  height: 100vh;
+  height: 100vh;                   /* fallback */
+  height: -webkit-fill-available;  /* iOS Safari */
+  height: 100dvh;                  /* Chrome/Firefox: dynamic viewport (excludes browser chrome) */
 }
 
 /* ===== Header ===== */
