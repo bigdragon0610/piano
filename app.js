@@ -3,16 +3,16 @@
 // ===== Note definitions (C4 octave) =====
 const NOTES = [
   { name: 'C',  label: 'ド',  freq: 261.63, type: 'white' },
-  { name: 'C#', label: '',    freq: 277.18, type: 'black' },
+  { name: 'C#', label: 'ド♯', freq: 277.18, type: 'black' },
   { name: 'D',  label: 'レ',  freq: 293.66, type: 'white' },
-  { name: 'D#', label: '',    freq: 311.13, type: 'black' },
+  { name: 'D#', label: 'レ♯', freq: 311.13, type: 'black' },
   { name: 'E',  label: 'ミ',  freq: 329.63, type: 'white' },
   { name: 'F',  label: 'ファ', freq: 349.23, type: 'white' },
-  { name: 'F#', label: '',    freq: 369.99, type: 'black' },
+  { name: 'F#', label: 'ファ♯', freq: 369.99, type: 'black' },
   { name: 'G',  label: 'ソ',  freq: 392.00, type: 'white' },
-  { name: 'G#', label: '',    freq: 415.30, type: 'black' },
+  { name: 'G#', label: 'ソ♯', freq: 415.30, type: 'black' },
   { name: 'A',  label: 'ラ',  freq: 440.00, type: 'white' },
-  { name: 'A#', label: '',    freq: 466.16, type: 'black' },
+  { name: 'A#', label: 'ラ♯', freq: 466.16, type: 'black' },
   { name: 'B',  label: 'シ',  freq: 493.88, type: 'white' },
   { name: 'C5', label: 'ド',  freq: 523.25, type: 'white' },
 ];
